@@ -1,5 +1,4 @@
 My solutions for advent of code (Rust)
 
-Currently I have not added argument handling for solving a specific day or year :(
-
-So input should go into ./input/\{YEAR\}/day_\{DAY\}.txt
+Input should go into ./input/\{YEAR\}/day_\{DAY\}.txt
+Or you can specify it in the arguments
