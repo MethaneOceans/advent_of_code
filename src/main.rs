@@ -62,7 +62,7 @@ fn main() {
                 println!("  part 1: {part_1}");
                 println!("  part 2: {part_2}");
             },
-            Err(_) => todo!(),
+            Err(e) => println!("Error while solving {year} - day {day}: {e}"),
         }
 
         return;

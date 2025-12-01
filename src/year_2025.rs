@@ -11,7 +11,7 @@ impl YearSolvers for Year2025 {
         }
 
         match day {
-            1 => Ok(day_1::solve_day_1(input)),
+            1 => day_1::solve_day_1(input),
             _ => Err(SolverError::SolverNotImplemented),
         }
     }

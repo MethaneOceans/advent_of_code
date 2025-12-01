@@ -1,16 +1,37 @@
-pub fn solve_day_1(input: &str) -> (String, String) {
+use crate::SolverError;
+
+pub fn solve_day_1(input: &str) -> Result<(String, String), SolverError> {
+    let mut err = None;
     let instructions = input.lines()
         .map(|line| line.trim())
         .filter(|line| !line.is_empty())
         .map(|line| {
+            // Skip calculations if there's an error.
+            if err.is_some() { return 0 }
+
             let (direction, clicks) = line.split_at(1);
-            let clicks: i32 = clicks.parse().unwrap();
+            
+            let clicks: i32 = match clicks.parse() {
+                Ok(value) => value,
+                Err(_) => {
+                    err = Some(SolverError::BadInput);
+                    return 0;
+                },
+            };
+
             match direction {
                 "L" => -clicks,
                 "R" => clicks,
-                _ => panic!(),
+                _ => {
+                    err = Some(SolverError::BadInput);
+                    0
+                },
             }
-        });
+        }).collect::<Vec<_>>();
+
+    if let Some(err) = err {
+        return Err(err);
+    }
     
     let mut position: i32 = 50;
     let mut part1_count = 0;
@@ -35,7 +56,7 @@ pub fn solve_day_1(input: &str) -> (String, String) {
         }
     }
 
-    (part1_count.to_string(), part2_count.to_string())
+    Ok((part1_count.to_string(), part2_count.to_string()))
 }
 
 #[cfg(test)]
@@ -45,7 +66,7 @@ mod tests {
 
     #[test]
     fn example() {
-        let (part_1, part_2) = solve_day_1(EXAMPLE_INPUT);
+        let (part_1, part_2) = solve_day_1(EXAMPLE_INPUT).unwrap();
         assert_eq!(&part_1, "3");
         assert_eq!(&part_2, "6");
     }
