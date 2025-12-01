@@ -108,7 +108,7 @@ fn solve_all(fail_silent: bool) {
                 Err(e) => {
                     if !fail_silent {
                         println!("  Day {day:>02}");
-                        println!("error: {e}")
+                        println!("    error: {e}");
                     }
                 },
             }
