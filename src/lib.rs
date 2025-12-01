@@ -18,16 +18,16 @@ trait YearSolvers {
 #[derive(Debug)]
 pub enum SolverError {
     DayOutOfRangeError,
-    InputFileNotFound,
     SolverNotImplemented,
+    BadInput,
 }
 
 impl Display for SolverError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             SolverError::DayOutOfRangeError => write!(f, "Day out of range!"),
-            SolverError::InputFileNotFound => write!(f, "Input not found!"),
             SolverError::SolverNotImplemented => write!(f, "Solver not implemented!"),
+            SolverError::BadInput => write!(f, "Input is wrong"),
         }
     }
 }
