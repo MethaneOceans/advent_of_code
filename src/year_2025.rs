@@ -6,14 +6,14 @@ pub mod day_2;
 pub struct Year2025;
 
 impl YearSolvers for Year2025 {
-    fn solve(day: i32, input: &str) -> Result<(String, String), SolverError> {
+    fn get_solver(day: i32) -> Result<Box<crate::DaySolverFunction>, SolverError> {
         if !(1..=12).contains(&day) {
             return Err(SolverError::DayOutOfRangeError);
         }
 
         match day {
-            1 => day_1::solve(input),
-            2 => day_2::solve(input),
+            1 => Ok(Box::new(day_1::solve)),
+            2 => Ok(Box::new(day_2::solve)),
             _ => Err(SolverError::SolverNotImplemented),
         }
     }

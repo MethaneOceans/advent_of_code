@@ -1,2 +1,3 @@
 Usage: advent_of_code (year) (day) [file]
        advent_of_code all
+       advent_of_code solvable

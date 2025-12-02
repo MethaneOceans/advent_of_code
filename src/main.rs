@@ -7,8 +7,15 @@ fn main() {
 
     let args = args().collect::<Vec<_>>();
 
-    if args.len() == 2 && args[1] == "all" {
-        solve_all(false);
+    if args.len() == 2 {
+        match args[1].as_str() {
+            "all" => solve_all(false),
+            "solvable" => graph_solvable(),
+            _ => {
+                println!("Error: Invalid arguments");
+                println!("{USAGE_MESSAGE}");
+            }
+        }
         return;
     }
 
@@ -92,5 +99,33 @@ fn solve_all(fail_silent: bool) {
                 },
             }
         }
+    }
+}
+
+fn graph_solvable() {
+    for year in 2015..=2025 {
+        print!("{year} [");
+
+        let days = if year >= 2025 { 12 } else { 25 };
+
+        let iter= (1..=days).into_iter()
+            .map(|day| -> Result<(), Box<dyn std::error::Error>> {
+                let path = format!("./input/{year}/day_{day}.txt");
+                let _input = std::fs::exists(path)?;
+                match advent_of_code::get_solver(year, day) {
+                    Ok(_) => Ok(()),
+                    Err(e) => Err(e)?,
+                }
+            });
+            
+
+        for value in iter {
+            match value {
+                Ok(_) => print!("\x1b[32m."),
+                Err(_) => print!("\x1b[31mx"),
+            }
+        }
+
+        print!("\x1b[0m]\n");
     }
 }
