@@ -1,36 +1,66 @@
-use std::ops::RangeInclusive;
-
+use std::{error::Error, ops::RangeInclusive, time::Instant};
 use crate::SolverError;
+
+macro_rules! timed {
+    ($e:expr) => {{
+        let start = Instant::now();
+        let value = $e;
+        let end = Instant::now();
+        println!("[{}:{}] Took {:?} to evaluate {}", file!(), line!(), (end - start), stringify!($e));
+        value
+    }};
+    ($e:expr, $s:literal) => {{
+        let start = Instant::now();
+        let value = $e;
+        let end = Instant::now();
+        println!("[{}:{}] {} took {:?}", file!(), line!(), $s, (end - start));
+        value
+    }}
+}
 
 pub fn solve(input: &str) -> Result<(String, String), SolverError> {
     let ranges = input.trim()
         .split(',')
         .map(|slice| {
             let Some((a, b)) = slice.split_once('-') else {
-                return Err(())
+                return Err(SolverError::BadInput)?
             };
 
-            let a = a.trim().parse::<usize>().unwrap();
-            let b = b.trim().parse::<usize>().unwrap();
+            let a = a.trim().parse::<usize>()?;
+            let b = b.trim().parse::<usize>()?;
 
             Ok((a, b))
-        });
-    
-    let mut part_1_count = 0;
-    let mut part_2_count = 0;
+        })
+        .collect::<Result<Vec<_>, Box<dyn Error>>>();
 
-    for range in ranges {
-        let Ok((a, b)) = range else {
-            return Err(SolverError::BadInput);
-        };
+    let Ok(ranges) = ranges else {
+        return Err(SolverError::BadInput);
+    };
 
-        get_invalid_ids_part_1(a..=b).into_iter()
-            .for_each(|x| part_1_count += x as usize);
-        get_invalid_ids_part_2(a..=b).into_iter()
-            .for_each(|x| part_2_count += x as usize);
+    let part_1 = timed!(solve_part_1(&ranges), "solve_part_1")?;
+    let part_2 = timed!(solve_part_2(&ranges), "solve_part_2")?;
+
+    Ok((part_1, part_2))
+}
+
+fn solve_part_1(ranges: &[(usize, usize)]) -> Result<String, SolverError> {
+    let mut count = 0;
+    for (a, b) in ranges {
+        get_invalid_ids_part_1(*a..=*b).into_iter()
+            .for_each(|x| count += x as usize);
     }
 
-    Ok((part_1_count.to_string(), part_2_count.to_string()))
+    Ok(count.to_string())
+}
+
+fn solve_part_2(ranges: &[(usize, usize)]) -> Result<String, SolverError> {
+    let mut count = 0;
+    for (a, b) in ranges {
+        get_invalid_ids_part_2(*a..=*b).into_iter()
+            .for_each(|x| count += x as usize);
+    }
+
+    Ok(count.to_string())
 }
 
 fn is_num_valid_part_1(num: usize) -> bool {
@@ -68,9 +98,10 @@ fn is_num_valid_part_2(num: usize) -> bool {
         .filter(|x| len % x == 0);
 
     for group_len in len_iter {
-        let mut groups = num_str.chunks_exact(group_len);
-        let first = groups.next().unwrap();
+        let mut groups = num_str.chunks_exact(group_len)
+            .map(|s| s);
         
+        let first = groups.next().unwrap();
         if groups.all(|ele| ele == first) {
             return false
         }
@@ -80,9 +111,9 @@ fn is_num_valid_part_2(num: usize) -> bool {
 }
 
 fn get_invalid_ids_part_2(range: RangeInclusive<usize>) -> Vec<usize> {
-    range.into_iter()
+    timed!(range.into_iter()
         .filter(|x| !is_num_valid_part_2(*x))
-        .collect()
+        .collect(), "get_invalid_ids_part_2")
 }
 
 #[cfg(test)]
