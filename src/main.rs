@@ -12,7 +12,13 @@ fn main() {
         return;
     }
 
-    if args.len() == 3 {
+    let path = if args.len() == 4 {
+        Some(args[3].to_string())
+    } else {
+        None
+    };
+
+    if args.len() == 3 || args.len() == 4 {
         let Ok(year) = args[1].parse::<i32>() else {
             println!("Error: Couldn't parse year");
             println!("{USAGE_MESSAGE}");
@@ -24,36 +30,10 @@ fn main() {
             return;
         };
 
-        let path = format!("./input/{year}/day_{day}.txt");
+        let path = path.unwrap_or(format!("./input/{year}/day_{day}.txt"));
+        // let path = format!("./input/{year}/day_{day}.txt");
+        
         let input = read_to_string(&path).expect(&format!("Expected an input file at {path}"));
-        
-        let result = solve(year, day, &input);
-        match result {
-            Ok((part_1, part_2)) => {
-                println!("Solutions for {year} - day {day}:");
-                println!("  part 1: {part_1}");
-                println!("  part 2: {part_2}");
-            },
-            Err(_) => todo!(),
-        }
-
-        return;
-    }
-
-    if args.len() == 4 {
-        let Ok(year) = args[1].parse::<i32>() else {
-            println!("Error: Couldn't parse year");
-            println!("{USAGE_MESSAGE}");
-            return;
-        };
-        let Ok(day) = args[2].parse::<i32>() else {
-            println!("Error: Couldn't parse day");
-            println!("{USAGE_MESSAGE}");
-            return;
-        };
-        
-        let path = &args[3];
-        let input = read_to_string(path).expect(&format!("Expected an input file at {path}"));
         
         let result = solve(year, day, &input);
         match result {
@@ -67,7 +47,6 @@ fn main() {
 
         return;
     }
-    
     
     println!("Error: Invalid arguments");
     println!("{USAGE_MESSAGE}");
