@@ -1,6 +1,6 @@
 use crate::SolverError;
 
-pub fn solve_day_1(input: &str) -> Result<(String, String), SolverError> {
+pub fn solve(input: &str) -> Result<(String, String), SolverError> {
     let mut err = None;
     let instructions = input.lines()
         .map(|line| line.trim())
@@ -66,7 +66,7 @@ mod tests {
 
     #[test]
     fn example() {
-        let (part_1, part_2) = solve_day_1(EXAMPLE_INPUT).unwrap();
+        let (part_1, part_2) = solve(EXAMPLE_INPUT).unwrap();
         assert_eq!(&part_1, "3");
         assert_eq!(&part_2, "6");
     }
