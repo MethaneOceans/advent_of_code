@@ -10,12 +10,8 @@ pub fn solve(input: &str) -> Result<(String, String), SolverError> {
                 return Err(())
             };
 
-            let Ok(a) = a.parse::<i32>() else {
-                return Err(());
-            };
-            let Ok(b) = b.parse::<i32>() else {
-                return Err(());
-            };
+            let a = a.trim().parse::<usize>().unwrap();
+            let b = b.trim().parse::<usize>().unwrap();
 
             Ok((a, b))
         });
@@ -26,45 +22,27 @@ pub fn solve(input: &str) -> Result<(String, String), SolverError> {
             return Err(SolverError::BadInput);
         };
 
-        if is_num_valid(a) {
-            part_1_count += a as i64;
-        }
-        if is_num_valid(b) {
-            part_1_count += b as i64;
-        }
+        get_invalid_ids(a..=b).into_iter()
+            .for_each(|x| part_1_count += x as usize);
     }
 
     Ok((part_1_count.to_string(), "Not yet implemented!".to_string()))
 }
 
-fn is_num_valid(num: i32) -> bool {
+fn is_num_valid(num: usize) -> bool {
     let num_str = num.to_string();
+    assert!(num_str.is_ascii(), "expected input to be ascii string");
 
-    // Can't have repeated digits if there's only one digit.
-    if num_str.chars().count() == 1 {
-        return true;
-    }
-    
-    let num_str = num_str.to_string().chars().collect::<Vec<_>>();
-    let len = num_str.len();
-
-    // If num cannot be split into equal parts it cannot consist of a repeated pattern
-    let len_iter = (1..len).into_iter()
-        .filter(|x| len % x == 0);
-
-    for group_len in len_iter {
-        let mut groups = num_str.chunks_exact(group_len);
-        let first = groups.next().unwrap();
-        
-        if groups.all(|ele| ele == first) {
-            return false
-        }
+    if num_str.len() % 2 != 0 {
+        return true
     }
 
-    true
+    let (a, b) = num_str.split_at(num_str.len() / 2);
+
+    a != b
 }
 
-fn get_invalid_ids(range: RangeInclusive<i32>) -> Vec<i32> {
+fn get_invalid_ids(range: RangeInclusive<usize>) -> Vec<usize> {
     range.into_iter()
         .filter(|x| !is_num_valid(*x))
         .collect()
