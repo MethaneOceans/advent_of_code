@@ -1,11 +1,13 @@
 use std::{error::Error, fmt::Display};
 
+pub mod year_2019;
 pub mod year_2025;
 
 pub fn solve(year: i32, day: i32, input: &str) -> Result<(String, String), Box<dyn Error>> {
     assert!((2015..=2025).contains(&year), "Expected year to be in the range of [2015, 2025]! Was {year}");
     
     match year {
+        2019 => Ok(year_2019::Year2019::solve(day, input)?),
         2025 => Ok(year_2025::Year2025::solve(day, input)?),
         _ => Err(Box::new(SolverError::SolverNotImplemented)),
     }
