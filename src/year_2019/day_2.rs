@@ -1,11 +1,18 @@
 use crate::SolverError;
 
 pub fn solve(input: &str) -> Result<(String, String), SolverError> {
-    let mut program = parse_input(input)?;
-    program[1] = 12;
-    program[2] = 2;
+    let program = parse_input(input)?;
+    // program[1] = 12;
+    // program[2] = 2;
 
-    let part_1 = run_intcode_program(program)[0];
+    // let part_1 = run_intcode_program(program.clone())[0];
+    let part_1 = run_input_program(program.clone(), 12, 2)[0];
+
+    // for i in 0..16 {
+    //     for j in 0..16 {
+    //         println!("")
+    //     }
+    // }
 
     Ok((part_1.to_string(),"".to_string()))
 }
@@ -53,6 +60,13 @@ fn run_intcode_program(mut program: Vec<i64>) -> Vec<i64> {
     }
 
     program
+}
+
+fn run_input_program(mut program: Vec<i64>, noun: i64, verb: i64) -> Vec<i64> {
+    program[1] = noun;
+    program[2] = verb;
+
+    run_intcode_program(program)
 }
 
 #[cfg(test)]
