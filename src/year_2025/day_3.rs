@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 use crate::SolverError;
 
 pub fn solve(input: &str) -> Result<(String, String), SolverError> {
@@ -53,37 +51,42 @@ fn solve_part_2(input: &str) -> Result<String, SolverError> {
 }
 
 fn solve_line_part_2(line: &str) -> Result<u64, SolverError> {
-    let mut digits = parse_line(line).collect::<Result<Vec<_>, _>>()?;
-    let num_digits = digits.len();
+    // Select the leftmost highest digit from line[(last_digit + 1)..(len - batteries_left)]
+    let digits = parse_line(line).collect::<Result<Vec<_>,SolverError>>()?;
+    let mut batteries_left = 12;
+    let mut result_digits = vec![];
+    let mut index_left = 0;
 
-    let lowest = digits.iter()
-        .enumerate()
-        .sorted_by(|(_, a), (_, b)| a.cmp(b))
-        .take(num_digits - 12)
-        .map(|t| t.0)
-        .sorted()
-        .rev()
-        .collect::<Vec<_>>();
+    while batteries_left > 0 {
+        dbg!(batteries_left);
+        dbg!(index_left);
+        let slice =  &digits[index_left..=(digits.len() - batteries_left)];
+        println!("{slice:?}");
 
-    for (index, digit) in digits.iter().enumerate() {
-        if lowest.contains(&index) {
-            print!("\x1b[31m{digit}");
-        } else {
-            print!("\x1b[32m{digit}");
-        }
+        let (i, d) = slice.iter()
+            .enumerate()
+            .rev()
+            .max_by(|(_, a), (_, b)| a.cmp(b)).unwrap();
+
+        dbg!(i);
+        dbg!(d);
+
+        result_digits.push(d);
+        index_left += i + 1;
+        
+        batteries_left -= 1;
+
+        println!();
     }
 
-    for i in lowest {
-        digits.remove(i);
-    }
 
-    let result = digits.into_iter()
-        .map(|d| d.to_string())
-        .collect::<String>()
-        .parse::<u64>().unwrap();
+    println!("result_digits: {result_digits:?}");
 
-    println!("\x1b[0m -> {result}");
-    
+    let result = result_digits.into_iter()
+        .map(|d| *d as u64)
+        .reduce(|acc, ele| acc * 10 + ele)
+        .unwrap();
+
     Ok(result)
 }
 
