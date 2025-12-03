@@ -1,4 +1,6 @@
 use std::{error::Error, ops::RangeInclusive, time::Instant};
+use itertools::Itertools;
+
 use crate::SolverError;
 
 macro_rules! timed {
@@ -97,13 +99,17 @@ fn is_num_valid_part_2(num: usize) -> bool {
     let len_iter = (1..len).into_iter()
         .filter(|x| len % x == 0);
 
-    for group_len in len_iter {
-        let mut groups = num_str.chunks_exact(group_len)
-            .map(|s| s);
+    for group_len in len_iter.rev() {
+        let num_groups = len / group_len;
+        let groups_equal = (0..group_len).into_iter()
+            .all(|i| {
+                (0..num_groups).into_iter()
+                    .map(|o| num_str[o * group_len + i])
+                    .all_equal()
+            });
         
-        let first = groups.next().unwrap();
-        if groups.all(|ele| ele == first) {
-            return false
+        if groups_equal {
+            return false;
         }
     }
 
@@ -111,9 +117,9 @@ fn is_num_valid_part_2(num: usize) -> bool {
 }
 
 fn get_invalid_ids_part_2(range: RangeInclusive<usize>) -> Vec<usize> {
-    timed!(range.into_iter()
+    range.into_iter()
         .filter(|x| !is_num_valid_part_2(*x))
-        .collect(), "get_invalid_ids_part_2")
+        .collect()
 }
 
 #[cfg(test)]
