@@ -1,7 +1,8 @@
 use crate::{SolverError, YearSolvers};
 
-pub mod day_1;
-pub mod day_2;
+mod day_1;
+mod day_2;
+mod day_3;
 
 pub struct Year2025;
 
@@ -14,6 +15,7 @@ impl YearSolvers for Year2025 {
         match day {
             1 => Ok(Box::new(day_1::solve)),
             2 => Ok(Box::new(day_2::solve)),
+            3 => Ok(Box::new(day_3::solve)),
             _ => Err(SolverError::SolverNotImplemented),
         }
     }
