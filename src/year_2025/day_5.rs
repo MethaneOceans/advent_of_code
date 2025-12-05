@@ -57,44 +57,35 @@ fn solve_part_2(ranges: &[RangeInclusive<usize>]) -> Result<usize, SolverError> 
         .collect::<Vec<_>>();
     
     let mut iterations = 0;
+    // Sort the ranges so they can be merged
+    ranges.sort_by(|a, b| a.start().cmp(b.start()));
+
+    let mut i = 0;
+    iterations += 1;
+
     loop {
-        // Sort the ranges so they can be merged
-        ranges.sort_by(|a, b| a.start().cmp(b.start()));
-
-        let mut i = 0;
-        let mut merged_any = false;
-        iterations += 1;
-
-        loop {
-            if i >= ranges.len() - 1 {
-                break;
-            }
-
-            let a = &ranges[i];
-            let b = &ranges[i+1];
-            
-            println!("i: {i}");
-            println!("a: {a:?}");
-            println!("b: {b:?}");
-            
-            if a.contains(b.start()) || a.contains(b.end()) {
-                println!("ranges overlap, merging");
-                let start = *a.start().min(b.start());
-                let end = *a.end().max(b.end());
-                println!("new range: {:?}", start..=end);
-                ranges.remove(i);
-                ranges[i] = start..=end;
-                merged_any = true;
-            } else {
-                i += 1;
-            }
-            println!();
-        }
-        
-        if !merged_any {
+        if i >= ranges.len() - 1 {
             break;
         }
+
+        let a = &ranges[i];
+        let b = &ranges[i+1];
         
+        println!("i: {i}");
+        println!("a: {a:?}");
+        println!("b: {b:?}");
+        
+        if a.contains(b.start()) || a.contains(b.end()) {
+            println!("ranges overlap, merging");
+            let start = *a.start().min(b.start());
+            let end = *a.end().max(b.end());
+            println!("new range: {:?}", start..=end);
+            ranges.remove(i);
+            ranges[i] = start..=end;
+        } else {
+            i += 1;
+        }
+        println!();
     }
 
     println!("{ranges:#?}");
