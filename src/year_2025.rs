@@ -5,6 +5,7 @@ mod day_2;
 mod day_3;
 mod day_4;
 mod day_5;
+mod day_6;
 
 pub struct Year2025;
 
@@ -20,6 +21,7 @@ impl YearSolvers for Year2025 {
             3 => Ok(Box::new(day_3::solve)),
             4 => Ok(Box::new(day_4::solve)),
             5 => Ok(Box::new(day_5::solve)),
+            6 => Ok(Box::new(day_6::solve)),
             _ => Err(SolverError::SolverNotImplemented),
         }
     }
